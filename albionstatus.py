@@ -19,6 +19,7 @@ headers = {
 }
 logger = logging.getLogger("albionstatus")
 sleep_time = 60
+failing_status = {"current_status": "online", "message": "All good.", "comment": "Could not fetch status."}
 
 
 def setup_logging():
@@ -76,7 +77,7 @@ def get_current_status():
         return status
     except:
         logger.log(logging.ERROR, "Couldn't fetch server status! Error:" + traceback.format_exc())
-        return {"current_status": "online", "message": "All good.", "comment": "Could not fetch status."}
+        return failing_status
 
 
 def get_last_status():
@@ -85,10 +86,15 @@ def get_last_status():
     cursor.execute(sql)
     db.commit()
 
-    status, message, comment = cursor.fetchall()[0]
-    cursor.close()
-    # TODO Check if status object is correct
-    return {"current_status": status, "message": message, "comment": comment}
+    try:
+        status, message, comment = cursor.fetchall()[0]
+        cursor.close()
+        return {"current_status": status, "message": message, "comment": comment}
+    except:
+        cursor.close()
+        logger.log(logging.ERROR, "Couldn't fetch status from DB! Error:" + traceback.format_exc())
+        return failing_status
+        # TODO Check if status object is correct
 
 
 def insert_new_status(status):
@@ -126,8 +132,10 @@ def run_albionstatus():
 
 
 def tweet(msg):
-    api.PostUpdate(msg)
-
+    try:
+        api.PostUpdate(msg)
+    except:
+        logger.log(logging.ERROR, "Couldn't tweet! Error:" + traceback.format_exc())
 
 if __name__ == "__main__":
     setup_everything()
