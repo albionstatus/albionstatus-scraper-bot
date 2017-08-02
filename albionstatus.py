@@ -5,7 +5,6 @@ import logging
 
 import sys
 import traceback
-from pprint import pprint
 
 import twitter
 import mysql.connector
@@ -76,7 +75,6 @@ def get_current_status():
         status["current_status"] = status.pop("status")
         return status
     except:
-        pprint(sys.exc_info())
         logger.log(logging.ERROR, "Couldn't fetch server status! Error:" + traceback.format_exc())
         return {"current_status": "online", "message": "All good.", "comment": "Could not fetch status."}
 
