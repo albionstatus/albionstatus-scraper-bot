@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.5
+#!/usr/bin/env python3.5 -u
 import time
 import json
 import logging
@@ -19,6 +19,7 @@ headers = {
     'User-Agent': 'AlbionStatus Bot @ albionstatus.com',
 }
 logger = logging.getLogger("albionstatus")
+sleep_time = 60
 
 
 def setup_logging():
@@ -29,7 +30,7 @@ def setup_logging():
     handler.setLevel(logging.INFO)
 
     # create a logging format
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s', datefmt='%y-%m-%d %H:%M:%S')
     handler.setFormatter(formatter)
 
     # add the handlers to the logger
@@ -56,6 +57,13 @@ def setup_mysql():
                                  user=config['mysql']['user'],
                                  password=config['mysql']['password'],
                                  database=config['mysql']['database'])
+
+
+def setup_everything():
+    setup_logging()
+    load_config()
+    setup_api()
+    setup_mysql()
 
 
 def get_current_status():
@@ -98,7 +106,7 @@ def is_different(current_status, last_status):
            not current_status["current_status"] == last_status["current_status"]
 
 
-def process_statuses():
+def run_albionstatus():
     current_status = get_current_status()
     last_status = get_last_status()
 
@@ -123,23 +131,10 @@ def tweet(msg):
     api.PostUpdate(msg)
 
 
-def tear_down():
-    if db:
-        db.close()
-
-
-def run_albionstatus():
-    setup_logging()
-    load_config()
-    setup_api()
-    setup_mysql()
-    process_statuses()
-    tear_down()
-
-
 if __name__ == "__main__":
+    setup_everything()
+
     while True:
         run_albionstatus()
-        sleep_time = 60
         logger.info("Sleep now for {} seconds".format(sleep_time))
         time.sleep(sleep_time)
