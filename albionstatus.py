@@ -6,6 +6,7 @@ import logging
 import sys
 import traceback
 
+import datetime
 import twitter
 import mysql.connector
 import requests
@@ -136,6 +137,16 @@ def tweet(msg):
         api.PostUpdate(msg)
     except:
         logger.log(logging.ERROR, "Couldn't tweet! Error:" + traceback.format_exc())
+        logger.log(logging.INFO, "Try again!")
+        if len(msg) < 140:
+            utc_datetime = datetime.datetime.utcnow()
+            time = utc_datetime.strftime("%H:%M:%S")
+            msg = msg + " | Time: " + time
+            try:
+                api.PostUpdate(msg[:140])
+            except:
+                logger.log(logging.ERROR, "Couldn't tweet again Stop trying! Error:" + traceback.format_exc())
+
 
 if __name__ == "__main__":
     setup_everything()
