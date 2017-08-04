@@ -17,7 +17,7 @@ Be sure to look into the repositories of the other parts of AlbionStatus:
 To install the microservice on your machine, you'll need:
 
 * Python **3!!** (sorry, no 2.x support here)
-* Pip3
+* [Pip](https://github.com/pypa/pip)
 * A MySQL database for the status information
 * The [MySQL Python connector](https://dev.mysql.com/downloads/connector/python/)
 * Credentials for the Twitter API
@@ -44,9 +44,9 @@ None known by now
 
 ## Built With
 
-* [Pip3](https://nodejs.org/) - Dependency
+* [Pip](https://github.com/pypa/pip) - Dependency
 management
-* [Requests]() - Nice HTTP lib for Python
+* [Requests](https://github.com/requests/requests/) - Nice HTTP lib for Python
 * [MySQL Python connector](https://dev.mysql.com/downloads/connector/python/)
 
 
