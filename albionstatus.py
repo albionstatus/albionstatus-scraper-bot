@@ -107,8 +107,7 @@ def insert_new_status(status):
 
 
 def is_different(current_status, last_status):
-    return not current_status["message"] == last_status["message"] or \
-           not current_status["current_status"] == last_status["current_status"]
+    return not current_status["current_status"] == last_status["current_status"]
 
 
 def run_albionstatus():
@@ -118,7 +117,7 @@ def run_albionstatus():
     insert_new_status(current_status)
 
     if is_different(current_status, last_status):
-        logger.info("Server status changed! Tweeting now")
+        logger.info("Server status changed from {0} to {1}! Tweeting now")
         msg = "Server status: {0}! Reason: {1}".format(current_status["current_status"], current_status["message"])
         if len(msg) > 140:
             msg = "Server status: {0}! Reason: Too long for that tweet, please check above!" \
