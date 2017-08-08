@@ -9,7 +9,7 @@ See deployment for notes on how to deploy the project on a live system.
 
 Be sure to look into the repositories of the other parts of AlbionStatus:
 * [The microservice](https://github.com/manniL/albionstatus-microservice)
-* [The website](https://github.com/manniL/albionstatus-webstei)
+* [The website](https://github.com/manniL/albionstatus-website)
 
 
 ### Prerequisites
