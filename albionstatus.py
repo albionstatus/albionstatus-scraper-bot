@@ -14,7 +14,7 @@ import requests
 api = None
 config = None
 db = None
-albion_url = "http://live.albiononline.com/status.txt"
+albion_url = "http://serverstatus.albiononline.com:9099/"
 headers = {
     'User-Agent': 'AlbionStatus Bot @ albionstatus.com',
 }
