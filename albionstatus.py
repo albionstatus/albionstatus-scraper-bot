@@ -1,15 +1,14 @@
 #!/usr/bin/env python3.5 -u
-import time
+import datetime
 import json
 import logging
-
 import sys
+import time
 import traceback
 
-import datetime
-import twitter
 import mysql.connector
 import requests
+import twitter
 
 api = None
 config = None
@@ -69,8 +68,10 @@ def setup_everything():
 
 def parse_status(status):
     # Parse weird status messages
+    offline_status = "offline"
     return {
-        '500': "offline",
+        '500': offline_status,
+        500: offline_status,
     }.get(status, status)
 
 
@@ -154,7 +155,8 @@ def run_albionstatus():
 
 def tweet(msg):
     try:
-        api.PostUpdate(msg)
+        # api.PostUpdate(msg)
+        pass
     except:
         logger.log(logging.ERROR, "Couldn't tweet! Error:" + traceback.format_exc())
         logger.log(logging.INFO, "Try again!")
