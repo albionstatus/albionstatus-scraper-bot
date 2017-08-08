@@ -67,6 +67,23 @@ def setup_everything():
     setup_mysql()
 
 
+def parse_status(status):
+    # Parse weird status messages
+    return {
+        '500': "offline",
+    }.get(status, status)
+
+
+def parse_message(message):
+    # Parse weird messages
+    message = message.lower()
+    timeout = "Timeout - is a DDOS ongoing?"
+    return {
+        'connect timed out': timeout,
+        'read timed out': timeout,
+    }.get(message, message)
+
+
 def get_current_status():
     try:
         response = requests.get(albion_url, headers=headers)
@@ -74,7 +91,9 @@ def get_current_status():
         status = response.text
         status = status.replace('\n', ' ').replace("\r", '').replace('\ufeff', '')
         status = json.loads(status)
-        status["current_status"] = status.pop("status")
+        status["current_status"] = parse_status(status.pop("status"))
+        status["message"] = parse_message(status["message"])
+
         return status
     except:
         logger.log(logging.ERROR, "Couldn't fetch server status! Error:" + traceback.format_exc())
@@ -107,7 +126,8 @@ def insert_new_status(status):
 
 
 def is_different(current_status, last_status):
-    return not current_status["current_status"] == last_status["current_status"]
+    return not current_status["current_status"] == last_status["current_status"] or \
+           not current_status["message"] == last_status["message"]
 
 
 def run_albionstatus():
