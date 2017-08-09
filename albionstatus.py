@@ -155,7 +155,7 @@ def run_albionstatus():
 
 def tweet(msg):
     try:
-        # api.PostUpdate(msg)
+        api.PostUpdate(msg)
         pass
     except:
         logger.log(logging.ERROR, "Couldn't tweet! Error:" + traceback.format_exc())
