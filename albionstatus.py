@@ -11,15 +11,19 @@ import requests
 import twitter
 from requests.adapters import HTTPAdapter
 
+version = '0.0.0'
+with open('VERSION') as fh:
+    version = fh.read().strip()
+    
 api = None
 config = None
 db = None
 albion_url = "http://serverstatus.albiononline.com:9099/"
 maintenance_url = "http://live.albiononline.com/status.txt"
 s = requests.Session()
-headers = {
-    'User-Agent': 'AlbionStatus Bot @ albionstatus.com',
-}
+s.headers.update({
+    'User-Agent': 'AlbionStatus Bot @ albionstatus.com, Version: {0}'.format(version),
+})
 logger = logging.getLogger("albionstatus")
 sleep_time = 60
 failing_status = {"current_status": "unknown",
@@ -89,7 +93,7 @@ def parse_status(status):
 
 def is_maintenance():
     try:
-        response = s.get(maintenance_url, headers=headers, timeout=30)
+        response = s.get(maintenance_url, timeout=30)
         response.encoding = "utf-8"
         status = response.text
         status = status.replace('\n', ' ').replace("\r", '').replace('\ufeff', '')
@@ -117,7 +121,7 @@ def parse_message(message):
 
 def get_current_status():
     try:
-        response = s.get(albion_url, headers=headers, timeout=30)
+        response = s.get(albion_url, timeout=30)
         response.encoding = "utf-8"
         status = response.text
         status = status.replace('\n', ' ').replace("\r", '').replace('\ufeff', '')
