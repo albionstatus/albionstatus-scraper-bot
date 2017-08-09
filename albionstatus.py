@@ -9,12 +9,14 @@ import traceback
 import mysql.connector
 import requests
 import twitter
+from requests.adapters import HTTPAdapter
 
 api = None
 config = None
 db = None
 albion_url = "http://serverstatus.albiononline.com:9099/"
 maintenance_url = "http://live.albiononline.com/status.txt"
+s = requests.Session()
 headers = {
     'User-Agent': 'AlbionStatus Bot @ albionstatus.com',
 }
@@ -38,6 +40,12 @@ def setup_logging():
 
     # add the handlers to the logger
     logger.addHandler(handler)
+
+
+def setup_requests():
+    # Zero retries for server checks
+    s.mount('http://', HTTPAdapter(max_retries=0))
+    s.mount('https://', HTTPAdapter(max_retries=0))
 
 
 def load_config():
@@ -64,6 +72,7 @@ def setup_mysql():
 
 def setup_everything():
     setup_logging()
+    setup_requests()
     load_config()
     setup_api()
     setup_mysql()
@@ -80,7 +89,7 @@ def parse_status(status):
 
 def is_maintenance():
     try:
-        response = requests.get(maintenance_url, headers=headers)
+        response = s.get(maintenance_url, headers=headers, timeout=15)
         response.encoding = "utf-8"
         status = response.text
         status = status.replace('\n', ' ').replace("\r", '').replace('\ufeff', '')
@@ -108,7 +117,7 @@ def parse_message(message):
 
 def get_current_status():
     try:
-        response = requests.get(albion_url, headers=headers)
+        response = s.get(albion_url, headers=headers, timeout=15)
         response.encoding = "utf-8"
         status = response.text
         status = status.replace('\n', ' ').replace("\r", '').replace('\ufeff', '')
@@ -122,8 +131,8 @@ def get_current_status():
             trace = traceback.format_exc()
         except:
             trace = ""
-        logger.log(logging.ERROR, "Couldn't fetch server status! Error: " + trace)
 
+        logger.log(logging.ERROR, "Couldn't fetch server status! Error: " + trace)
         return failing_status
 
 
@@ -181,7 +190,7 @@ def run_albionstatus():
 
 def tweet(msg):
     try:
-        # api.PostUpdate(msg)
+        api.PostUpdate(msg)
         pass
     except:
         logger.log(logging.ERROR, "Couldn't tweet! Error:" + traceback.format_exc())
@@ -191,8 +200,7 @@ def tweet(msg):
             time = utc_datetime.strftime("%H:%M:%S")
             msg = msg + " | Time: " + time
             try:
-                pass
-            # api.PostUpdate(msg[:140])
+                api.PostUpdate(msg[:140])
             except:
                 logger.log(logging.ERROR, "Couldn't tweet again Stop trying! Error:" + traceback.format_exc())
 
