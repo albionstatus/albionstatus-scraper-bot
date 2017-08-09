@@ -118,7 +118,12 @@ def get_current_status():
 
         return status
     except:
-        logger.log(logging.ERROR, "Couldn't fetch server status! Error:" + traceback.format_exc())
+        try:
+            trace = traceback.format_exc()
+        except:
+            trace = ""
+        logger.log(logging.ERROR, "Couldn't fetch server status! Error: " + trace)
+
         return failing_status
 
 
