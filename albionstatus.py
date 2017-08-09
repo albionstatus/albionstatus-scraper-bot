@@ -44,8 +44,8 @@ def setup_logging():
 
 def setup_requests():
     # Zero retries for server checks
-    s.mount('http://', HTTPAdapter(max_retries=0))
-    s.mount('https://', HTTPAdapter(max_retries=0))
+    s.mount('http://', HTTPAdapter(max_retries=1))
+    s.mount('https://', HTTPAdapter(max_retries=1))
 
 
 def load_config():
@@ -89,7 +89,7 @@ def parse_status(status):
 
 def is_maintenance():
     try:
-        response = s.get(maintenance_url, headers=headers, timeout=15)
+        response = s.get(maintenance_url, headers=headers, timeout=30)
         response.encoding = "utf-8"
         status = response.text
         status = status.replace('\n', ' ').replace("\r", '').replace('\ufeff', '')
@@ -117,7 +117,7 @@ def parse_message(message):
 
 def get_current_status():
     try:
-        response = s.get(albion_url, headers=headers, timeout=15)
+        response = s.get(albion_url, headers=headers, timeout=30)
         response.encoding = "utf-8"
         status = response.text
         status = status.replace('\n', ' ').replace("\r", '').replace('\ufeff', '')
