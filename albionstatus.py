@@ -20,7 +20,9 @@ headers = {
 }
 logger = logging.getLogger("albionstatus")
 sleep_time = 60
-failing_status = {"current_status": "online", "message": "All good.", "comment": "Could not fetch status."}
+failing_status = {"current_status": "unknown",
+                  "message": "AlbionStatus couldn't fetch status. Likely there is a maintenance going on",
+                  "comment": "Could not fetch status."}
 
 
 def setup_logging():
